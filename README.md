@@ -38,3 +38,4 @@ draw_plot.py <csv_0> [csv_1] ...
 
 Results are saved to `benchmark.png`.
 
+![](https://github.com/jysh1214/cuda-gemm/blob/main/assets/benchmark.png)
