@@ -97,11 +97,12 @@ static __global__ void block_thread_tiled_vector_load_gemm_kernel(const float* A
 #pragma unroll
     for (int r = 0; r < THREAD_TILE_M; ++r) {
         int global_row = blockIdx.y * BLOCK_TILE_M + thread_start_row + r;
-        int global_col = blockIdx.x * BLOCK_TILE_N + thread_start_col;
-        reinterpret_cast<float4*>(&C[global_row * N + global_col])[0] =
-            make_float4(accu[r][0], accu[r][1], accu[r][2], accu[r][3]);
-        reinterpret_cast<float4*>(&C[global_row * N + global_col + 4])[0] =
-            make_float4(accu[r][4], accu[r][5], accu[r][6], accu[r][7]);
+#pragma unroll
+        for (int c = 0; c < THREAD_TILE_N; c += 4) {
+            int global_col = blockIdx.x * BLOCK_TILE_N + thread_start_col + c;
+            reinterpret_cast<float4*>(&C[global_row * N + global_col])[0] =
+                make_float4(accu[r][c], accu[r][c + 1], accu[r][c + 2], accu[r][c + 3]);
+        }
     }
 }
 }  // namespace
