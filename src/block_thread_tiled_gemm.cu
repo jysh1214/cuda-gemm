@@ -35,10 +35,8 @@ static __global__ void block_thread_tiled_gemm_kernel(const float* A, const floa
             int tile_col = linear % BLOCK_TILE_K;
             int global_row = blockIdx.y * BLOCK_TILE_M + tile_row;
             int global_col = tile_k_index * BLOCK_TILE_K + tile_col;
-            int global_stride = K;
-            block_tile_a[tile_col][tile_row] = (global_row < M && global_col < K)
-                                                   ? A[global_row * global_stride + global_col]
-                                                   : 0.0f;
+            block_tile_a[tile_col][tile_row] =
+                (global_row < M && global_col < K) ? A[global_row * K + global_col] : 0.0f;
         }
 
         // copy tile B to shared memory
@@ -49,10 +47,8 @@ static __global__ void block_thread_tiled_gemm_kernel(const float* A, const floa
             int tile_col = linear % BLOCK_TILE_N;
             int global_row = tile_k_index * BLOCK_TILE_K + tile_row;
             int global_col = blockIdx.x * BLOCK_TILE_N + tile_col;
-            int global_stride = N;
-            block_tile_b[tile_row][tile_col] = (global_row < K && global_col < N)
-                                                   ? B[global_row * global_stride + global_col]
-                                                   : 0.0f;
+            block_tile_b[tile_row][tile_col] =
+                (global_row < K && global_col < N) ? B[global_row * N + global_col] : 0.0f;
         }
         __syncthreads();
 
