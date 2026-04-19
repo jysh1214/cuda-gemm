@@ -15,6 +15,7 @@ static __global__ void block_thread_tiled_gemm_kernel(const float* A, const floa
     int tid = threadIdx.x;
 
     // set thread's position in block
+    // compute where that 8×8 sub-tile lives inside the 64×64 block tile
     int thread_start_row = (tid / (BLOCK_TILE_N / THREAD_TILE_N)) * THREAD_TILE_M;
     int thread_start_col = (tid % (BLOCK_TILE_N / THREAD_TILE_N)) * THREAD_TILE_N;
 
